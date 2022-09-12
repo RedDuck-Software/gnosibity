@@ -5,3 +5,8 @@
     align-items: center;
     margin-top: 8rem;
 }
+
+.login__buttons {
+    display: flex;
+    flex-direction: column;
+}

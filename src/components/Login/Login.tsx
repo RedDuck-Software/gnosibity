@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { SafeInfo } from "@gnosis.pm/safe-apps-sdk";
-import { BityApiClientInterface } from "@bity/api";
+import {BityApiClient, BityApiClientInterface} from "@bity/api";
 import { loadSdk } from "../../helpers/loadSdk";
 import { connectBity } from "../../helpers/connectBity";
 import { createOrder } from "../../helpers/createOrder";
@@ -29,17 +29,41 @@ export const Login: FC = () => {
     setBityApiKey(event.target.value);
   }
 
+  const getAccessToken = () => {
+    let accessToken = ''
+    const oauthState = localStorage.getItem("oauth2authcodepkce-state");
+    if(typeof oauthState === 'string') {
+      accessToken = JSON.parse(oauthState)?.accessToken?.value
+    }
+    console.log(accessToken)
+    return accessToken
+  }
+
   const handleConnectBity = async () => {
-    const connectedBity = await connectBity(bityApiKey);
-    setBity(connectedBity);
+    //const connectedBity = await connectBity(bityApiKey);
+    // @ts-ignore // can't convert the constructor function to a class.
+    const bityInstance: any = new BityApiClient({
+      exchangeApiUrl: 'https://exchange.api.bity.com',
+      clientId: '7ZAlmqwgOtGQq_jA7jKGzw',
+    });
+    setBity(bityInstance);
     setIsOrderSectionHidden(false);
   }
 
   async function handleCreateOrder() {
-    const result = createOrder();
-    const preparedOrder = await result.generateObjectForOrderCreation();
-    const res = await bity?.createOrder(preparedOrder) ?? '';
-    const paymentDetails = await bity?.fetchOrderWithUrl(res);
+    const code = localStorage.getItem('oauth2authcodepkce-state')
+    if (code) {
+      console.log(JSON.parse(code))
+    }
+    if(safeInfo?.safeAddress) {
+      const result = createOrder(safeInfo?.safeAddress);
+      const preparedOrder = await result.generateObjectForOrderCreation();
+      const res = await bity?.createOrder(preparedOrder) ?? '';
+      const paymentDetails = await bity?.fetchOrderWithUrl(res);
+      console.log('Payment details: ', paymentDetails)
+      console.log('Create order: ', res)
+      console.log(result)
+    }
   }
 
   return (
@@ -54,9 +78,12 @@ export const Login: FC = () => {
           placeholder="Enter bity key"
           type="text"
         />
-        <button onClick={handleConnectBity}>Auth</button>
+        <div className={'login__buttons'}>
+          <button onClick={handleConnectBity}>Auth</button>
+          <button onClick={getAccessToken}>Get Access Token</button>
+          <button onClick={handleCreateOrder}>Create Order</button>
+        </div>
       </div>
-      {!isOrderSectionHidden && <button onClick={handleCreateOrder}>Order</button>}
     </div>
   );
 }

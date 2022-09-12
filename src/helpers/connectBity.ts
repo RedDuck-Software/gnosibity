@@ -27,7 +27,6 @@ export async function connectBity (bityApiKey: string): Promise<BityApiClientInt
     }
 
     bity.getAccessToken().then((res: any) => {
-      // location.replace('https://localhost:8080');
       console.log(res.token)
     })
   })
