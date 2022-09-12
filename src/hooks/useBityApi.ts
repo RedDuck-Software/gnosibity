@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { BityApi, UnconnectedBityApi } from '../api/bity';
 import { OAUTH_KEY_NAME } from '../helpers/constants';
@@ -10,14 +10,18 @@ export const useBityApi = () => {
   const [bityApi, setBityApi] = useState<BityApi>(BityApi.getInstance());
   const [connected, setConnected] = useState<boolean>(false);
 
-  const connect = useCallback<() => void>(() => {
+  const connect = () => {
     if (!bityApi || !bityApi.isConnected()) {
       unconnectedBityApi.connect().then((bityApi) => {
         setBityApi(bityApi);
         setConnected(true);
       });
+      return;
     }
-  }, [bityApi, connected]);
+    if (bityApi && bityApi.isConnected()) {
+      setConnected(true);
+    }
+  };
 
   useEffect(() => {
     if (getFromLocalStorage(OAUTH_KEY_NAME)) {

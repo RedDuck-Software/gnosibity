@@ -2,6 +2,7 @@ import { OrderPaymentDetails } from '@bity/api/models/order-payment-details';
 import React, { FC, useState } from 'react';
 import { AiOutlineDown } from 'react-icons/ai';
 import { BsCurrencyExchange } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
 
 import { style } from './exchangePage.styles';
 
@@ -12,6 +13,7 @@ import { useBityApi } from '../../hooks/useBityApi';
 import { useWallet } from '../../hooks/useWallet';
 
 const ExchangePage: FC = () => {
+  const navigate = useNavigate();
   const { active, account, activate, provider } = useWallet();
   const { bityApi } = useBityApi();
   const [toAddress, setToAddress] = useState<string>('');
@@ -54,6 +56,8 @@ const ExchangePage: FC = () => {
       console.error('Error in verification: ', e);
     }
   };
+
+  const handleBack = () => navigate('/');
 
   return (
     <div className={style.wrapper}>
@@ -125,6 +129,9 @@ const ExchangePage: FC = () => {
 
         <div onClick={handleExchange} className={style.confirmButton}>
           Exchange
+        </div>
+        <div onClick={handleBack} className={style.confirmButton}>
+          Back
         </div>
       </div>
     </div>

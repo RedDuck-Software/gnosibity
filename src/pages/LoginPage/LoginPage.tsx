@@ -6,9 +6,9 @@ import { loadSdk } from '../../helpers/loadSdk';
 import './styles.css';
 import { useBityApi } from '../../hooks/useBityApi';
 
-export const Login: FC = () => {
+const LoginPage: FC = () => {
   const btn =
-    'bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-5/6';
+    'bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-5/6 mt-1';
 
   const [safeInfo, setSafeInfo] = useState<SafeInfo>();
   const { connected, connect } = useBityApi();
@@ -31,12 +31,25 @@ export const Login: FC = () => {
           <div>
             <p>Is bity connected: {connected ? 'true' : 'false'}</p>
           </div>
-          <button className={btn} onClick={handleConnectBity}>
-            Auth
-          </button>
-          <button className={btn} onClick={() => navigate('/exchange-page')}>
-            Create order page
-          </button>
+          {!connected && (
+            <button className={btn} onClick={handleConnectBity}>
+              Auth
+            </button>
+          )}
+          {connected && (
+            <>
+              <button
+                className={btn}
+                onClick={() => navigate('/exchange-page')}
+              >
+                Create order page
+              </button>
+              <button className={btn} onClick={() => navigate('/history')}>
+                History Page
+              </button>
+            </>
+          )}
+
           <button className={btn} onClick={() => navigate('/error-page')}>
             Error Page
           </button>
@@ -45,3 +58,5 @@ export const Login: FC = () => {
     </div>
   );
 };
+
+export default LoginPage;
