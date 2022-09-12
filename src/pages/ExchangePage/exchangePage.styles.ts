@@ -9,7 +9,7 @@ export const style = {
   currencySelectorIcon: `flex items-center`,
   currencySelectorTicker: `mx-2 text-[#B2B9D2]`,
   currencySelectorArrow: `text-lg text-[#B2B9D2]`,
-  confirmButton: `bg-[#6CA6F6] my-2 rounded-2xl py-6 px-8 text-xl font-semibold flex items-center justify-center cursor-pointer border hover:bg-blue-500`,
+  confirmButton: `bg-[#6CA6F6] my-2 rounded-2xl py-6 px-8 text-xl text-white font-semibold flex items-center justify-center cursor-pointer border hover:bg-blue-500`,
   ulStyles: `list-disc list-inside pl-2 marker:text-[#6CA6F6]`,
   liStyles: `text-lg text-[#B2B9D2]`,
 };
