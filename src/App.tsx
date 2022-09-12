@@ -1,8 +1,9 @@
-import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Login } from "./components/Login/Login";
-import ExchangePage from "./pages/ExchangePage/ExchangePage";
-import ErrorPage from "./pages/LoginErrorPage/LoginErrorPage";
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import { Login } from './components/Login/Login';
+import ExchangePage from './pages/ExchangePage/ExchangePage';
+import ErrorPage from './pages/LoginErrorPage/LoginErrorPage';
 
 function App() {
   return (
