@@ -40,12 +40,12 @@ export const Login: FC = () => {
   }
 
   const handleConnectBity = async () => {
-    //const connectedBity = await connectBity(bityApiKey);
+    const bityInstance = await connectBity(bityApiKey);
     // @ts-ignore // can't convert the constructor function to a class.
-    const bityInstance: any = new BityApiClient({
-      exchangeApiUrl: 'https://exchange.api.bity.com',
-      clientId: '7ZAlmqwgOtGQq_jA7jKGzw',
-    });
+    // const bityInstance: any = new BityApiClient({
+    //   exchangeApiUrl: 'https://exchange.api.bity.com',
+    //   clientId: '7ZAlmqwgOtGQq_jA7jKGzw',
+    // });
     setBity(bityInstance);
     setIsOrderSectionHidden(false);
   }
