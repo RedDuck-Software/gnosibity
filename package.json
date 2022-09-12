@@ -27,10 +27,16 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "export HTTPS=true&&PORT=8080 react-app-rewired start",
+    "start": "cross-env HTTPS=true PORT=8080 react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "lint": "eslint . --quiet",
+    "lint:fix": "eslint . --quiet --fix",
+    "format": "prettier . --check",
+    "format:fix": "prettier . --write",
+    "codestyle": "yarn lint && yarn format",
+    "codestyle:fix": "yarn lint:fix && yarn format:fix"
   },
   "eslintConfig": {
     "extends": [
@@ -49,5 +55,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "eslint": "8.22.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-react": "^7.31.7",
+    "eslint-plugin-react-hooks": "^4.6.0"
   }
 }
