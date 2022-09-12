@@ -60,13 +60,12 @@ export const Login: FC = () => {
       console.log(JSON.parse(code))
     }
     if (safeInfo?.safeAddress) {
-      const result = createOrder(safeInfo?.safeAddress);
-      const preparedOrder = await result.generateObjectForOrderCreation();
+      const preparedOrder = await createOrder("0x2798d52306AAfaDb4b51ebc6bBe63554E29f6951", "ETH", "BTC", 1, 1);
       const res = await bity?.createOrder(preparedOrder) ?? '';
       const paymentDetails = await bity?.fetchOrderWithUrl(res);
       console.log('Payment details: ', paymentDetails)
       console.log('Create order: ', res)
-      console.log(result)
+      console.log(preparedOrder)
     }
   }
 
