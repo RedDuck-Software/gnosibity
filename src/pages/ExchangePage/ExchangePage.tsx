@@ -14,7 +14,7 @@ const ExchangePage: FC = () => {
             <div className={style.content}>
                 <div className={style.formHeader}>
                     <div>Exchange </div>
-                    <BsCurrencyExchange/>
+                    <BsCurrencyExchange />
                 </div>
                 <div className={style.transferPropContainer}>
                     <input
@@ -50,12 +50,12 @@ const ExchangePage: FC = () => {
                     </div>
 
                 </div>
-                <ul className={style.ulStyles}> 
+                <ul className={style.ulStyles}>
                     <li className={style.liStyles}>Trading fee: 1.60 CFH</li>
                     <li className={style.liStyles}>Cryptocurrency transaction cost 0.000025 BTC</li>
                     <li className={style.liStyles}>Exchange rate 0.077/1</li>
                 </ul>
-                
+
                 <div onClick={() => alert('click')} className={style.confirmButton}>
                     Exchange
                 </div>

@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FC, useEffect, useState } from "react";
-import { BiError } from 'react-icons/bi'        
+import { BiError } from 'react-icons/bi'
 import { style } from "./loginErrorPage.styles";
 
 const ErrorPage: FC = () => {

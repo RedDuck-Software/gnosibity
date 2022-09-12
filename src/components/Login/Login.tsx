@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { SafeInfo } from "@gnosis.pm/safe-apps-sdk";
-import {BityApiClient, BityApiClientInterface} from "@bity/api";
+import { BityApiClient, BityApiClientInterface } from "@bity/api";
 import { loadSdk } from "../../helpers/loadSdk";
 import { connectBity } from "../../helpers/connectBity";
 import { createOrder } from "../../helpers/createOrder";
@@ -36,7 +36,7 @@ export const Login: FC = () => {
   const getAccessToken = () => {
     let accessToken = ''
     const oauthState = localStorage.getItem("oauth2authcodepkce-state");
-    if(typeof oauthState === 'string') {
+    if (typeof oauthState === 'string') {
       accessToken = JSON.parse(oauthState)?.accessToken?.value
     }
     console.log(accessToken)
@@ -59,7 +59,7 @@ export const Login: FC = () => {
     if (code) {
       console.log(JSON.parse(code))
     }
-    if(safeInfo?.safeAddress) {
+    if (safeInfo?.safeAddress) {
       const result = createOrder(safeInfo?.safeAddress);
       const preparedOrder = await result.generateObjectForOrderCreation();
       const res = await bity?.createOrder(preparedOrder) ?? '';
@@ -77,18 +77,18 @@ export const Login: FC = () => {
       <p >7ZAlmqwgOtGQq_jA7jKGzw</p>
       <div>
         <input
-        className={btn}
+          className={btn}
           onChange={handleChangeKey}
           value={bityApiKey}
           placeholder="Enter bity key"
           type="text"
         />
         <div className="flex flex-col items-center">
-          <button className={btn}onClick={handleConnectBity}>Auth</button>
-          <button className={btn}onClick={getAccessToken}>Get Access Token</button>
-          <button className={btn}onClick={handleCreateOrder}>Create Order</button>
-          <button className={btn} onClick={()=>navigate('/exchange-page')}>Create order page</button>
-          <button className={btn} onClick={()=>navigate('/error-page')}>Error Page</button>
+          <button className={btn} onClick={handleConnectBity}>Auth</button>
+          <button className={btn} onClick={getAccessToken}>Get Access Token</button>
+          <button className={btn} onClick={handleCreateOrder}>Create Order</button>
+          <button className={btn} onClick={() => navigate('/exchange-page')}>Create order page</button>
+          <button className={btn} onClick={() => navigate('/error-page')}>Error Page</button>
 
         </div>
       </div>
