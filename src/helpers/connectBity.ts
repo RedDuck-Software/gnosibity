@@ -1,5 +1,8 @@
 import { BityApiClient, BityApiClientInterface } from '@bity/api';
 
+import { BITY_KEY } from './constants';
+import { setInLocalStorage } from './localStorage';
+
 export async function connectBity(
   bityApiKey: string,
 ): Promise<BityApiClientInterface> {
@@ -36,6 +39,6 @@ export async function connectBity(
     });
   });
 
-  localStorage.setItem('bity-key', JSON.stringify(bityApiKey));
+  setInLocalStorage(BITY_KEY, JSON.stringify(bityApiKey));
   return bity;
 }

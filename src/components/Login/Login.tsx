@@ -3,16 +3,17 @@ import { SafeInfo } from '@gnosis.pm/safe-apps-sdk';
 import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { BITY_KEY, OAUTH_KEY } from '../../helpers/constants';
 import { createOrder } from '../../helpers/createOrder';
 import { loadSdk } from '../../helpers/loadSdk';
-
 import './styles.css';
+import { getFromLocalStorage } from '../../helpers/localStorage';
 
 export const Login: FC = () => {
   const btn =
     'bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded w-5/6';
-  const storedKey = localStorage.getItem('bity-key')
-    ? JSON.parse(localStorage.getItem('bity-key') ?? '')
+  const storedKey = getFromLocalStorage(BITY_KEY)
+    ? JSON.parse(getFromLocalStorage(BITY_KEY) ?? '')
     : '';
 
   const [safeInfo, setSafeInfo] = useState<SafeInfo>();
@@ -33,7 +34,7 @@ export const Login: FC = () => {
 
   const getAccessToken = () => {
     let accessToken = '';
-    const oauthState = localStorage.getItem('oauth2authcodepkce-state');
+    const oauthState = getFromLocalStorage(OAUTH_KEY);
     if (typeof oauthState === 'string') {
       accessToken = JSON.parse(oauthState)?.accessToken?.value;
     }
@@ -54,7 +55,7 @@ export const Login: FC = () => {
   };
 
   async function handleCreateOrder() {
-    const code = localStorage.getItem('oauth2authcodepkce-state');
+    const code = getFromLocalStorage(OAUTH_KEY);
     if (code) {
       console.log(JSON.parse(code));
     }
