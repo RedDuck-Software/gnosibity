@@ -30,10 +30,14 @@ export class UnconnectedBityApi {
     this.getBityApiClientFn = getBityApiClientFn;
   }
 
-  public connect(): Promise<BityApi> {
-    return this.getBityApiClientFn().then((bityApiClient) =>
-      BityApi.getInstance().setBityApiClient(bityApiClient),
-    );
+  public async connect(): Promise<BityApi> {
+    const bityApiClient = await this.getBityApiClientFn();
+    if (!bityApiClient.isAuthorized() || bityApiClient.isAccessTokenExpired()) {
+      if (!(await bityApiClient.isReturningFromAuthServer())) {
+        bityApiClient.fetchAuthorizationCode();
+      }
+    }
+    return BityApi.getInstance().setBityApiClient(bityApiClient);
   }
 }
 

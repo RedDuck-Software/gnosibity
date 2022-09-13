@@ -1,11 +1,10 @@
 import {
   BityApiClient,
-  BityApiClientInterface,
   BityApiClientConfig,
+  BityApiClientInterface,
 } from '@bity/api';
 
-import { BITY_CLIENT_ID, OAUTH_KEY_NAME } from './constants';
-import { getFromLocalStorage } from './localStorage';
+import { BITY_CLIENT_ID, REDIRECT_URL } from './constants';
 
 const newBityApiClient = (
   config: BityApiClientConfig,
@@ -17,19 +16,10 @@ const newBityApiClient = (
 
 export const getBityApiClient = async (): Promise<BityApiClientInterface> => {
   const clientId = BITY_CLIENT_ID;
-  const oauthToken = getFromLocalStorage(OAUTH_KEY_NAME);
 
-  const partialConfig = {
+  return await newBityApiClient({
     exchangeApiUrl: 'https://exchange.api.bity.com',
     clientId,
-  };
-
-  if (oauthToken) {
-    return await newBityApiClient(partialConfig);
-  }
-
-  const bity = await newBityApiClient({
-    ...partialConfig,
     oauthConfig: {
       clientId,
       authorizationUrl: 'https://connect.bity.com/oauth2/auth',
@@ -38,16 +28,10 @@ export const getBityApiClient = async (): Promise<BityApiClientInterface> => {
         'https://auth.bity.com/scopes/exchange.place',
         'https://auth.bity.com/scopes/exchange.history',
       ],
-      redirectUrl: 'https://localhost:8080/',
+      redirectUrl: REDIRECT_URL,
       onAccessTokenExpiry: (refreshAccessToken) => refreshAccessToken(),
       onInvalidGrant: (refreshAuthCodeOrRefreshToken) =>
-        console.log(refreshAuthCodeOrRefreshToken),
+        refreshAuthCodeOrRefreshToken(),
     },
   });
-  bity.fetchAuthorizationCode();
-  bity
-    .isReturningFromAuthServer()
-    .then(() => bity.getAccessToken().then((res) => console.log(res.token)));
-
-  return bity;
 };
