@@ -1,4 +1,5 @@
 export const style = {
+  copyButton: `bg-[#6CA6F6] m-2 p-1 rounded text-m text-white font-semibold flex items-center justify-center cursor-pointer border hover:bg-blue-500`,
   wrapper: `w-screen flex items-center justify-center mt-14 font-mono`,
   content: `bg-[#EDF1F7] w-[40rem] rounded-xl p-4 appearance-none shadow-xl`,
   formHeader: `px-2 flex items-center justify-between font-semibold text-xl text-blue-600`,

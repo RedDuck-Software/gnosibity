@@ -1,8 +1,7 @@
 import { OrderPaymentDetailsAll } from '@bity/api/models';
 import React, { FC, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import OrderComponent from '../../components/Order';
 import { useBityApi } from '../../hooks/useBityApi';
 import { style } from '../ExchangePage/exchangePage.styles';
 
@@ -20,7 +19,6 @@ const HistoryPage: FC = () => {
       bityApi
         .fetchHistory()
         .then((orders) => {
-          console.log(orders);
           setLoading(false);
           setOrders(orders);
         })
@@ -36,6 +34,7 @@ const HistoryPage: FC = () => {
   }, [connected]);
 
   const handleBack = () => navigate('/');
+
   const handleRefresh = () => {
     fetchHistory();
   };
@@ -53,7 +52,13 @@ const HistoryPage: FC = () => {
       {!loading &&
         !isError &&
         orders.map((order) => (
-          <OrderComponent key={order.reference} order={order} />
+          <Link
+            className="block my-2 p-3 hover:text-blue-600 text-black bg-gray-100 rounded hover:underline flex justify-center items-center"
+            key={order.reference}
+            to={`/order/${order.reference}`}
+          >
+            {order.reference}
+          </Link>
         ))}
       <div className="flex justify-center items-center">
         <div onClick={handleRefresh} className={style.confirmButton}>

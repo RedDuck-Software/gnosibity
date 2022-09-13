@@ -1,8 +1,7 @@
 import { CurrencyAndAmount } from '@bity/api/models';
-import { OrderPaymentDetails } from '@bity/api/models/order-payment-details';
 import { useWeb3React } from '@web3-react/core';
-import { MetaMask } from '@web3-react/metamask';
 import React, { FC, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { AiOutlineDown } from 'react-icons/ai';
 import { BsCurrencyExchange } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +13,7 @@ import UsdtLogo from '../../assets/tether-usdt-logo.png';
 import { metamask, gnosisSafe } from '../../connectors';
 import { SUPPORTED_CHAIN } from '../../helpers/constants';
 import { createOrder } from '../../helpers/createOrder';
+import { timeout } from '../../helpers/timeout';
 import { useBityApi } from '../../hooks/useBityApi';
 
 type Metadata = {
@@ -27,7 +27,7 @@ const ExchangePage: FC = () => {
   const GETTING_CURRENCY = 'USDT';
 
   const navigate = useNavigate();
-  const { isActive, account, provider, connector } = useWeb3React();
+  const { isActive, account } = useWeb3React();
   const { bityApi } = useBityApi();
   const [toAddress, setToAddress] = useState<string>('');
   const [fromValue, setFromValue] = useState<number>(1);
@@ -75,9 +75,11 @@ const ExchangePage: FC = () => {
     };
   };
 
-  const displayMetadata = (metadata: Metadata) => {
+  const displayMetadata = (metadata: Metadata, shouldSetPrice = false) => {
     const price = parseFloat(metadata.value || '0');
-    setPrice(price);
+    if (shouldSetPrice) {
+      setPrice(price);
+    }
     setToValue(price);
     if (metadata.txCost) {
       setTxCost(metadata.txCost);
@@ -89,7 +91,7 @@ const ExchangePage: FC = () => {
 
   useEffect(() => {
     fetchMetadata(1).then((metadata) => {
-      displayMetadata(metadata);
+      displayMetadata(metadata, true);
     });
   }, []);
 
@@ -111,35 +113,11 @@ const ExchangePage: FC = () => {
         fromValue,
         toValue,
       );
-      console.log('Prepared order: ', preparedOrder);
       const orderUrl = await bityApi.createOrder(preparedOrder);
-      console.log('Order URL: ', orderUrl);
       const paymentDetails = await bityApi.fetchOrderWithUrl(orderUrl);
-      console.log('Payment details: ', paymentDetails);
-      if (connector instanceof MetaMask && provider) {
-        try {
-          if (
-            paymentDetails instanceof OrderPaymentDetails &&
-            paymentDetails.messageToSign
-          ) {
-            const { text, verificationUrl } = paymentDetails.messageToSign;
-            const signature = await (
-              await provider.getSigner(0)
-            ).signMessage(text);
-            await bityApi.verifySignature(verificationUrl, signature);
-          }
-          const paymentDetailsAfterVerification =
-            await bityApi.fetchOrderWithUrl(orderUrl);
-          console.log(
-            'Payment details after verification: ',
-            paymentDetailsAfterVerification,
-          );
-        } catch (e) {
-          console.error('Error in verification: ', e);
-        }
-      } else {
-        console.log('Gnosis safe are not able to sign messages');
-      }
+      toast('Order placed.');
+      await timeout(2000);
+      navigate(`/order/${paymentDetails.reference}`);
     }
   };
 

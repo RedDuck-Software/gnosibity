@@ -93,4 +93,10 @@ export class BityApi {
   ): Promise<void> {
     return this.getClientOrThrow().verifySignature(orderRelativeUrl, signature);
   }
+
+  public fetchOrderByReference(
+    reference: URL,
+  ): Promise<OrderPaymentDetailsAll> {
+    return this.getClientOrThrow().fetchOrderWithId(reference);
+  }
 }
