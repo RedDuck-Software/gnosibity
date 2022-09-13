@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { style } from './exchangePage.styles';
 
-import BtcLogo from '../../assets/btc.png';
 import EthLogo from '../../assets/eth.png';
+import UsdtLogo from '../../assets/tether-usdt-logo.png';
 import { createOrder } from '../../helpers/createOrder';
 import { useBityApi } from '../../hooks/useBityApi';
 import { useWallet } from '../../hooks/useWallet';
@@ -27,7 +27,7 @@ const ExchangePage: FC = () => {
       account,
       toAddress,
       'ETH',
-      'BTC',
+      'USDT',
       fromValue,
       toValue,
     );
@@ -104,10 +104,10 @@ const ExchangePage: FC = () => {
           <div className={style.currencySelector}>
             <div className={style.currencySelectorContent}>
               <div className={style.currencySelectorIcon}>
-                <img src={BtcLogo} alt="" />
+                <img src={UsdtLogo} alt="" />
                 <AiOutlineDown className={style.currencySelectorArrow} />
               </div>
-              <div className={style.currencySelectorTicker}>BTC</div>
+              <div className={style.currencySelectorTicker}>USDT</div>
             </div>
           </div>
         </div>
