@@ -1,5 +1,7 @@
 import { CurrencyAndAmount } from '@bity/api/models';
 import { OrderPaymentDetails } from '@bity/api/models/order-payment-details';
+import { useWeb3React } from '@web3-react/core';
+import { MetaMask } from '@web3-react/metamask';
 import React, { FC, useEffect, useState } from 'react';
 import { AiOutlineDown } from 'react-icons/ai';
 import { BsCurrencyExchange } from 'react-icons/bs';
@@ -9,9 +11,10 @@ import { style } from './exchangePage.styles';
 
 import EthLogo from '../../assets/eth.png';
 import UsdtLogo from '../../assets/tether-usdt-logo.png';
+import { metamask, gnosisSafe } from '../../connectors';
+import { SUPPORTED_CHAIN } from '../../helpers/constants';
 import { createOrder } from '../../helpers/createOrder';
 import { useBityApi } from '../../hooks/useBityApi';
-import { useWallet } from '../../hooks/useWallet';
 
 type Metadata = {
   value: string | undefined;
@@ -24,7 +27,7 @@ const ExchangePage: FC = () => {
   const GETTING_CURRENCY = 'USDT';
 
   const navigate = useNavigate();
-  const { active, account, activate, provider } = useWallet();
+  const { isActive, account, provider, connector } = useWeb3React();
   const { bityApi } = useBityApi();
   const [toAddress, setToAddress] = useState<string>('');
   const [fromValue, setFromValue] = useState<number>(1);
@@ -38,7 +41,22 @@ const ExchangePage: FC = () => {
     amount: '0',
     currency: SENDING_CURRENCY,
   });
-  const handleConnectWallet = () => activate();
+
+  const handleConnectMetamask = async () => {
+    try {
+      await metamask.activate(SUPPORTED_CHAIN);
+    } catch (e) {
+      console.error('Error while connecting Metamask wallet: ', e);
+    }
+  };
+
+  const handleConnectGnosisSafe = async () => {
+    try {
+      await gnosisSafe.activate();
+    } catch (e) {
+      console.error('Error while connecting GnosisSafe wallet: ', e);
+    }
+  };
 
   const fetchMetadata = async (amountIn: number): Promise<Metadata> => {
     const preparedOrder = await createOrder(
@@ -84,37 +102,44 @@ const ExchangePage: FC = () => {
   }, [fromValue]);
 
   const handleExchange = async () => {
-    const preparedOrder = await createOrder(
-      account,
-      toAddress,
-      SENDING_CURRENCY,
-      GETTING_CURRENCY,
-      fromValue,
-      toValue,
-    );
-    console.log('Prepared order: ', preparedOrder);
-    const orderUrl = await bityApi.createOrder(preparedOrder);
-    console.log('Order URL: ', orderUrl);
-    const paymentDetails = await bityApi.fetchOrderWithUrl(orderUrl);
-    console.log('Payment details: ', paymentDetails);
-    try {
-      if (
-        paymentDetails instanceof OrderPaymentDetails &&
-        paymentDetails.messageToSign
-      ) {
-        const { text, verificationUrl } = paymentDetails.messageToSign;
-        const signature = await (await provider.getSigner(0)).signMessage(text);
-        await bityApi.verifySignature(verificationUrl, signature);
+    if (account) {
+      const preparedOrder = await createOrder(
+        account,
+        toAddress,
+        SENDING_CURRENCY,
+        GETTING_CURRENCY,
+        fromValue,
+        toValue,
+      );
+      console.log('Prepared order: ', preparedOrder);
+      const orderUrl = await bityApi.createOrder(preparedOrder);
+      console.log('Order URL: ', orderUrl);
+      const paymentDetails = await bityApi.fetchOrderWithUrl(orderUrl);
+      console.log('Payment details: ', paymentDetails);
+      if (connector instanceof MetaMask && provider) {
+        try {
+          if (
+            paymentDetails instanceof OrderPaymentDetails &&
+            paymentDetails.messageToSign
+          ) {
+            const { text, verificationUrl } = paymentDetails.messageToSign;
+            const signature = await (
+              await provider.getSigner(0)
+            ).signMessage(text);
+            await bityApi.verifySignature(verificationUrl, signature);
+          }
+          const paymentDetailsAfterVerification =
+            await bityApi.fetchOrderWithUrl(orderUrl);
+          console.log(
+            'Payment details after verification: ',
+            paymentDetailsAfterVerification,
+          );
+        } catch (e) {
+          console.error('Error in verification: ', e);
+        }
+      } else {
+        console.log('Gnosis safe are not able to sign messages');
       }
-      const paymentDetailsAfterVerification = await bityApi.fetchOrderWithUrl(
-        orderUrl,
-      );
-      console.log(
-        'Payment details after verification: ',
-        paymentDetailsAfterVerification,
-      );
-    } catch (e) {
-      console.error('Error in verification: ', e);
     }
   };
 
@@ -128,7 +153,7 @@ const ExchangePage: FC = () => {
           <BsCurrencyExchange />
         </div>
         <div className={style.transferPropContainer}>
-          {active ? (
+          {isActive ? (
             <input
               type="text"
               className={style.transferPropInput}
@@ -137,7 +162,12 @@ const ExchangePage: FC = () => {
               disabled
             />
           ) : (
-            <button onClick={handleConnectWallet}>Connect wallet</button>
+            <>
+              <button onClick={handleConnectMetamask}>Connect Metamask</button>
+              <button onClick={handleConnectGnosisSafe}>
+                Connect Gnosis Safe
+              </button>
+            </>
           )}
         </div>
         <div className={style.transferPropContainer}>
