@@ -2,6 +2,7 @@ import { SafeInfo } from '@gnosis.pm/safe-apps-sdk';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import ModalWindow from '../../components/ModalWindow/ModalWindow';
 import { loadSdk } from '../../helpers/loadSdk';
 import './styles.css';
 import { useBityApi } from '../../hooks/useBityApi';
@@ -13,6 +14,7 @@ const LoginPage: FC = () => {
   const [safeInfo, setSafeInfo] = useState<SafeInfo>();
   const { connected, connect } = useBityApi();
   const navigate = useNavigate();
+  const [isModalShown, setIsModalShown] = useState(false);
 
   useEffect(() => {
     loadSdk().then((info) => {
@@ -53,6 +55,10 @@ const LoginPage: FC = () => {
           <button className={btn} onClick={() => navigate('/error-page')}>
             Error Page
           </button>
+          <button className={btn} onClick={() => setIsModalShown(true)}>
+            SHOW MODAL
+          </button>
+          {isModalShown ? <ModalWindow setIsShown={setIsModalShown} /> : ' '}
         </div>
       </div>
     </div>
