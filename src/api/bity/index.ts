@@ -1,5 +1,5 @@
 import { BityApiClientInterface } from '@bity/api';
-import { OrderPaymentDetailsAll, PreparedOrder, URL } from '@bity/api/models';
+import { OrderPaymentDetailsAll, PreparedOrder, URL, Order } from '@bity/api/models';
 
 import { NotConnectedClientRequestError } from './errors';
 
@@ -66,6 +66,10 @@ export class BityApi {
     return this.getClientOrThrow().createOrder(preparedOrder);
   }
 
+  public fetchOrderExchangeRate(preparedOrder: PreparedOrder): Promise<Order>{
+    return this.getClientOrThrow().fetchEstimateForOrder(preparedOrder);
+  }
+  
   public fetchOrderWithUrl(orderUrl: URL): Promise<OrderPaymentDetailsAll> {
     return this.getClientOrThrow().fetchOrderWithUrl(orderUrl);
   }

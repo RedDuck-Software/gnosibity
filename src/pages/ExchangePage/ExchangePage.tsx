@@ -1,5 +1,5 @@
 import { OrderPaymentDetails } from '@bity/api/models/order-payment-details';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { AiOutlineDown } from 'react-icons/ai';
 import { BsCurrencyExchange } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
@@ -19,9 +19,26 @@ const ExchangePage: FC = () => {
   const [toAddress, setToAddress] = useState<string>('');
   const [fromValue, setFromValue] = useState<number>(0);
   const [toValue, setToValue] = useState<number>(0);
-
+  const [price, setPrice] = useState<string>(''); 
   const handleConnectWallet = () => activate();
-
+  useEffect(function () {
+    const fetchData = async () => {
+      const preparedOrder = await createOrder(
+        'account',
+        'toAddress',
+        'ETH',
+        'USDT',
+        1,
+        1,
+      );
+      const exchangeRate = await bityApi.fetchOrderExchangeRate(preparedOrder);
+      return exchangeRate;
+    }
+    fetchData().then(b => {
+      setPrice(b.output.amount.value ?? '');
+    })
+  }, [])
+  
   const handleExchange = async () => {
     const preparedOrder = await createOrder(
       account,
@@ -124,7 +141,7 @@ const ExchangePage: FC = () => {
           <li className={style.liStyles}>
             Cryptocurrency transaction cost 0.000025 BTC
           </li>
-          <li className={style.liStyles}>Exchange rate 0.077/1</li>
+          <li className={style.liStyles}>Exchange rate {price ?? 0}</li>
         </ul>
 
         <div onClick={handleExchange} className={style.confirmButton}>
