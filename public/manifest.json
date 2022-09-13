@@ -1,7 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "description": "A description of what your app do",
+  "short_name": "Gnosibity",
+  "name": "Gnosis interactions with Bity",
+  "description": "Allows to interact with bity using Gnosis Safe wallet",
   "iconPath": "myAppIcon.svg",
   "icons": [
     {

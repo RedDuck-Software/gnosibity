@@ -1,7 +1,6 @@
 import { OrderPaymentDetailsAll } from '@bity/api/models';
-import format from 'date-fns/format';
 import React, { FC, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useBityApi } from '../../hooks/useBityApi';
 import { style } from '../ExchangePage/exchangePage.styles';
@@ -34,12 +33,8 @@ const HistoryPage: FC = () => {
     fetchHistory();
   }, [connected]);
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return format(date, 'MMM dd hh:mm:ss');
-  };
-
   const handleBack = () => navigate('/');
+
   const handleRefresh = () => {
     fetchHistory();
   };
@@ -57,10 +52,13 @@ const HistoryPage: FC = () => {
       {!loading &&
         !isError &&
         orders.map((order) => (
-          <div key={order.reference} style={{ margin: '1rem 0' }}>
-            <p>Order id: {order.reference}</p>
-            <p>Created at: {formatDate(order.createdAt)}</p>
-          </div>
+          <Link
+            className="block my-2 p-3 hover:text-blue-600 text-black bg-gray-100 rounded hover:underline flex justify-center items-center"
+            key={order.reference}
+            to={`/order/${order.reference}`}
+          >
+            {order.reference}
+          </Link>
         ))}
       <div className="flex justify-center items-center">
         <div onClick={handleRefresh} className={style.confirmButton}>

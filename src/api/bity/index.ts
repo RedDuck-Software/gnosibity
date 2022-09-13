@@ -1,5 +1,10 @@
 import { BityApiClientInterface } from '@bity/api';
-import { OrderPaymentDetailsAll, PreparedOrder, URL } from '@bity/api/models';
+import {
+  OrderPaymentDetailsAll,
+  PreparedOrder,
+  URL,
+  Order,
+} from '@bity/api/models';
 
 import { NotConnectedClientRequestError } from './errors';
 
@@ -25,10 +30,14 @@ export class UnconnectedBityApi {
     this.getBityApiClientFn = getBityApiClientFn;
   }
 
-  public connect(): Promise<BityApi> {
-    return this.getBityApiClientFn().then((bityApiClient) =>
-      BityApi.getInstance().setBityApiClient(bityApiClient),
-    );
+  public async connect(): Promise<BityApi> {
+    const bityApiClient = await this.getBityApiClientFn();
+    if (!bityApiClient.isAuthorized() || bityApiClient.isAccessTokenExpired()) {
+      if (!(await bityApiClient.isReturningFromAuthServer())) {
+        bityApiClient.fetchAuthorizationCode();
+      }
+    }
+    return BityApi.getInstance().setBityApiClient(bityApiClient);
   }
 }
 
@@ -66,6 +75,10 @@ export class BityApi {
     return this.getClientOrThrow().createOrder(preparedOrder);
   }
 
+  public fetchOrderExchangeRate(preparedOrder: PreparedOrder): Promise<Order> {
+    return this.getClientOrThrow().fetchEstimateForOrder(preparedOrder);
+  }
+
   public fetchOrderWithUrl(orderUrl: URL): Promise<OrderPaymentDetailsAll> {
     return this.getClientOrThrow().fetchOrderWithUrl(orderUrl);
   }
@@ -79,5 +92,11 @@ export class BityApi {
     signature: string,
   ): Promise<void> {
     return this.getClientOrThrow().verifySignature(orderRelativeUrl, signature);
+  }
+
+  public fetchOrderByReference(
+    reference: URL,
+  ): Promise<OrderPaymentDetailsAll> {
+    return this.getClientOrThrow().fetchOrderWithId(reference);
   }
 }
