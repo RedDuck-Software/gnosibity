@@ -1,6 +1,6 @@
 import { Order } from '@bity/api/models';
 
-type Currency = 'ETH' | 'BTC';
+type Currency = 'ETH' | 'BTC' | 'USDT';
 
 export function createOrder(
   from: string,
