@@ -1,0 +1,14 @@
+{
+    "projects": {
+        "default": "gnosibity"
+    },
+    "targets": {
+        "gnosibity": {
+            "hosting": {
+                "gnosibity": [
+                    "gnosibity"
+                ]
+            }
+        }
+    }
+}

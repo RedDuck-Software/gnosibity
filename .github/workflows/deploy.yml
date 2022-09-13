@@ -1,0 +1,53 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
+      - name: Install yarn
+        run: npm i --location=global yarn
+      - name: Install project deps
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+      - name: Build
+        run: yarn build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: ./build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./build
+      - uses: w9jds/firebase-action@master
+        name: Deploy application
+        with:
+          args: deploy --only hosting:gnosibity
+        env:
+          PROJECT_PATH: ./
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
