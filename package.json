@@ -6,6 +6,7 @@
     "@bity/api": "^3.7.9",
     "@bity/oauth2-auth-code-pkce": "^2.13.0",
     "@ethersproject/providers": "^5.7.0",
+    "@ethersproject/units": "^5.7.0",
     "@gnosis.pm/safe-apps-sdk": "^7.6.0",
     "@gnosis.pm/safe-apps-web3modal": "^15.0.0",
     "@gnosis.pm/safe-core-sdk": "^2.3.2",

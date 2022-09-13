@@ -11,12 +11,16 @@ const OrderPage: FC = () => {
   const navigate = useNavigate();
   const { reference } = useParams<{ reference: string }>();
   const [order, setOrder] = useState<OrderPaymentDetailsAll | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { bityApi, connected } = useBityApi();
 
   const fetchOrder = () => {
     if (connected && reference) {
+      setIsLoading(true);
       bityApi.fetchOrderByReference(reference).then((order) => {
+        // order.paymentReceivedAt = order.awaitingPaymentSince;
         setOrder(order);
+        setIsLoading(false);
       });
     }
   };
@@ -29,12 +33,15 @@ const OrderPage: FC = () => {
 
   return (
     <div style={{ margin: '1rem 0' }}>
-      {order ? (
+      {order && !isLoading ? (
         <OrderComponent fetchOrder={fetchOrder} order={order} />
       ) : (
         <p>Loading...</p>
       )}
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center gap-1">
+        <div onClick={() => fetchOrder()} className={style.confirmButton}>
+          Refetch
+        </div>
         <div onClick={handleBack} className={style.confirmButton}>
           Back
         </div>
